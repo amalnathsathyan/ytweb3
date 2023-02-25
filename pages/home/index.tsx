@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Background, Video } from "../../components";
 import { Header, Sidebar } from "../../layout";
-import { ApolloClient } from "../../clients";
+import { apolloClient } from "../../clients";
 import { GET_ALL_VIDEOS } from "../../queries";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
 
   const fetchVideos = async () => {
     setLoading(true);
-    ApolloClient.query({
+    apolloClient.query({
       query: GET_ALL_VIDEOS,
       variables: {
         first: 200,

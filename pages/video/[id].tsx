@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { Header, Sidebar } from '../../layout'
 import React, { useEffect, useState } from 'react'
 import { Background, Player, Video as RelatedVideos } from '../../components'
-import { ApolloClient } from '../../clients'
+import { apolloClient } from '../../clients'
 import { GET_ALL_VIDEOS } from '../../queries'
 import Link from 'next/link'
 import moment from 'moment'
@@ -17,7 +17,7 @@ export default function Video() {
   const [relatedVideos, setRelatedVideos] = useState<IVideo[]>([])
 
   const fetchVideos = () => {
-    ApolloClient.query({
+    apolloClient.query({
       query: GET_ALL_VIDEOS,
       variables: {
         first: 20,

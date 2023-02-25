@@ -7,7 +7,7 @@ import { publicProvider } from "wagmi/providers/public";
 import { ThemeProvider } from "../utils";
 import { Toaster } from "react-hot-toast";
 import { ApolloProvider } from "@apollo/client";
-import { ApolloClient, LivePeerClient } from "../clients";
+import { apolloClient, LivePeerClient } from '../clients';
 
 const { chains, provider } = configureChains(
   [chain.polygonMumbai],
@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }) {
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider chains={chains}>
         <ThemeProvider>
-          <ApolloProvider client={ApolloClient}>
+          <ApolloProvider client={apolloClient}>
             <LivepeerConfig client={LivePeerClient}>
               <Component {...pageProps} />
               <Toaster />
