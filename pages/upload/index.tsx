@@ -14,59 +14,83 @@ export default function Upload() {
   const [thumbnail, setThumbnail] = useState<File>()
   const [uploadData, setUploadData] = useState({})
   const [video, setVideo] = useState<File>()
+  const [videoProgress, setVideoProgress] = useState([]);
 
-  const thumbnailRef = useRef<HTMLInputElement>(null)
+  const thumbnailRef = useRef<HTMLInputElement>(null);
 
-  const { mutate: createAsset, data: asset, uploadProgress } = useCreateAsset()
+  const {
+    mutate: createAsset,
+    data: assets,
+    status,
+    progress,
+    error,
+  } = useCreateAsset(
+    video
+      ? {
+          sources: [{ name: title, file: video }],
+        }
+      : null
+  );
+
+  console.log('assets:', assets);
+  console.log('status:', status);
+  console.log('error', error);
+  console.log('progress:', progress);
+
+  useEffect(() => {
+    if (progress && progress.length) setVideoProgress(progress[0]);
+  }, [progress]);
 
   const goBack = () => {
-    window.history.back()
-  }
+    window.history.back();
+  };
 
   // When a user clicks on the upload button
   const handleSubmit = async () => {
+    console.log('title:', title);
+    console.log('file:', video);
+    const createAssetResponse = await createAsset?.();
+    console.log('createAssetResponse:', createAssetResponse);
+
     // Calling the upload video function
-    await uploadVideo()
+    // await uploadVideo();
     // Calling the upload thumbnail function and getting the CID
-    const thumbnailCID = await uploadThumbnail()
+    const thumbnailCID = await uploadThumbnail();
     // Creating a object to store the metadata
     let data = {
-      video: asset?.id,
+      video: assets?.id,
       title,
       description,
       location,
       category,
       thumbnail: thumbnailCID,
       UploadedDate: Date.now(),
-    }
+    };
     // Calling the saveVideo function and passing the metadata object
-    console.log(data)
-    await saveVideo(data)
-  }
+    console.log('data:', data);
+    // setUploadData(data);
+    //await saveVideo(data);
+  };
 
   // Function to upload the video to IPFS
   const uploadThumbnail = async () => {
     // Passing the file to the saveToIPFS function and getting the CID
-    const cid = await saveToIPFS(thumbnail)
+    const cid = await saveToIPFS(thumbnail);
     // Returning the CID
-    return cid
-  }
+    return cid;
+  };
 
   // Function to upload the video to Livepeer
   const uploadVideo = async () => {
     // Calling the createAsset function from the useCreateAsset hook to upload the video
-    createAsset({
-      name: title,
-      file: video,
-    })
-  }
+    createAsset?.();
+  };
 
   // Function to save the video to the Contract
-  const saveVideo = async (data = uploadData) => {
+  const saveVideo = async (data) => {
     // Get the contract from the getContract function
-    let contract = await getContract()
+    let contract = await getContract();
     // Upload the video to the contract
-
     await contract.uploadVideo(
       data.video,
       data.title,
@@ -76,16 +100,16 @@ export default function Upload() {
       data.thumbnail,
       false,
       data.UploadedDate
-    )
-  }
+    );
+  };
 
   return (
     <Background>
       <p className="text-2xl font-bold text-white">
-        {uploadProgress && uploadProgress * 100}
+        {videoProgress && videoProgress.progress * 100}
       </p>
       <div className="flex h-screen w-full flex-row">
-        <Sidebar />
+        <Sidebar updateCategory={(e) => setCategory(e)} />
         <div className="flex flex-1 flex-col">
           <Header />
           <div className="mt-5 mr-10 flex  justify-end">
@@ -93,7 +117,7 @@ export default function Upload() {
               <button
                 className="mr-6  rounded-lg border border-gray-600 bg-transparent py-2  px-6  dark:text-[#9CA3AF]"
                 onClick={() => {
-                  goBack()
+                  goBack();
                 }}
               >
                 Discard
@@ -109,18 +133,14 @@ export default function Upload() {
           </div>
           <div className="m-10 mt-5 flex 	flex-col  lg:flex-row">
             <div className="flex flex-col lg:w-3/4 ">
-              <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">
-                Title
-              </label>
+              <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">Title</label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Rick Astley - Never Gonna Give You Up (Official Music Video)"
                 className="border-borderWhiteGray mt-2  h-12  w-[90%] rounded-md border bg-transparent p-2 focus:outline-none dark:border-[#444752]  dark:text-white dark:placeholder:text-gray-600"
               />
-              <label className="mt-10 text-sm text-gray-600 dark:text-[#9CA3AF]">
-                Description
-              </label>
+              <label className="mt-10 text-sm text-gray-600 dark:text-[#9CA3AF]">Description</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -130,9 +150,7 @@ export default function Upload() {
 
               <div className="mt-10 flex w-[90%] flex-row  justify-between">
                 <div className="flex w-2/5 flex-col	">
-                  <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">
-                    Location
-                  </label>
+                  <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">Location</label>
                   <input
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
@@ -142,9 +160,7 @@ export default function Upload() {
                   />
                 </div>
                 <div className="flex w-2/5 flex-col	">
-                  <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">
-                    Category
-                  </label>
+                  <label className="text-sm text-gray-600  dark:text-[#9CA3AF]">Category</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
@@ -162,20 +178,18 @@ export default function Upload() {
                   </select>
                 </div>
               </div>
-              <label className="mt-10 text-sm  text-gray-600 dark:text-[#9CA3AF]">
-                Thumbnail
-              </label>
+              <label className="mt-10 text-sm  text-gray-600 dark:text-[#9CA3AF]">Thumbnail</label>
 
               <div
                 onClick={() => {
-                  thumbnailRef.current.click()
+                  thumbnailRef.current.click();
                 }}
                 className="border-borderWhiteGray mt-2 flex  h-36 w-64 items-center justify-center rounded-md  border-2 border-dashed p-2 dark:border-gray-600"
               >
                 {thumbnail ? (
                   <img
                     onClick={() => {
-                      thumbnailRef.current.click()
+                      thumbnailRef.current.click();
                     }}
                     src={URL.createObjectURL(thumbnail)}
                     alt="thumbnail"
@@ -191,7 +205,7 @@ export default function Upload() {
                 className="hidden"
                 ref={thumbnailRef}
                 onChange={(e) => {
-                  setThumbnail(e.target.files[0])
+                  setThumbnail(e.target.files[0]);
                 }}
               />
             </div>
@@ -201,5 +215,5 @@ export default function Upload() {
         </div>
       </div>
     </Background>
-  )
+  );
 }
