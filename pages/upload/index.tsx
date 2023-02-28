@@ -28,6 +28,7 @@ export default function Upload() {
     video
       ? {
           sources: [{ name: title, file: video }],
+          noWait: true,
         }
       : null
   );
@@ -47,29 +48,26 @@ export default function Upload() {
 
   // When a user clicks on the upload button
   const handleSubmit = async () => {
-    console.log('title:', title);
-    console.log('file:', video);
-    const createAssetResponse = await createAsset?.();
-    console.log('createAssetResponse:', createAssetResponse);
-
     // Calling the upload video function
-    // await uploadVideo();
+    await uploadVideo();
     // Calling the upload thumbnail function and getting the CID
     const thumbnailCID = await uploadThumbnail();
     // Creating a object to store the metadata
-    let data = {
-      video: assets?.id,
-      title,
-      description,
-      location,
-      category,
-      thumbnail: thumbnailCID,
-      UploadedDate: Date.now(),
-    };
-    // Calling the saveVideo function and passing the metadata object
-    console.log('data:', data);
-    // setUploadData(data);
-    //await saveVideo(data);
+    if (assets) {
+      let data = {
+        video: assets?.id,
+        title,
+        description,
+        location,
+        category,
+        thumbnail: thumbnailCID,
+        UploadedDate: Date.now(),
+      };
+      // Calling the saveVideo function and passing the metadata object
+      console.log('data:', data);
+      setUploadData(data);
+      await saveVideo(data);   
+    }
   };
 
   // Function to upload the video to IPFS
@@ -83,7 +81,7 @@ export default function Upload() {
   // Function to upload the video to Livepeer
   const uploadVideo = async () => {
     // Calling the createAsset function from the useCreateAsset hook to upload the video
-    createAsset?.();
+    createAsset();
   };
 
   // Function to save the video to the Contract
