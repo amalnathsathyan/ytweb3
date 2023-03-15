@@ -10,6 +10,10 @@ const WEB3_STORAGE_KEY = process.env.NEXT_PUBLIC_WEB3_STORAGE_KEY;
 const SUB_GRAPH_BASE_URL = 'https://api.thegraph.com';
 const SUB_GRAPH_NAME = 'amalnathsathyan/web3yt';
 const SUB_GRAPH_URL = `${SUB_GRAPH_BASE_URL}/subgraphs/name/${SUB_GRAPH_NAME}`
+const STATUS = {
+  READY: 'ready',
+  FAILED: 'failed',
+};
 
 export {
   APP_NAME,
@@ -22,4 +26,5 @@ export {
   SUB_GRAPH_URL,
   LIVEPEER_KEY,
   WEB3_STORAGE_KEY,
-}
+  STATUS,
+};
