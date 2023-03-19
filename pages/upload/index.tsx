@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Sidebar, Header } from '../../layout'
-import { BiCloud, BiPlus } from 'react-icons/bi'
-import { useAsset, useCreateAsset } from '@livepeer/react'
-import { UploadInput, Background } from '../../components'
-import { saveToIPFS, getContract } from '../../utils'
-import toast from 'react-hot-toast'
+import { BiCloud, BiPlus, BiUpload } from 'react-icons/bi';
+import { useAsset, useCreateAsset } from '@livepeer/react';
+import { UploadInput, Background } from '../../components';
+import { saveToIPFS, getContract } from '../../utils';
+import toast from 'react-hot-toast';
+import UploadStatus from '../../components/uploadStatus/UploadStatus';
 
 export default function Upload() {
-  const [title, setTitle] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
-  const [category, setCategory] = useState<string>('')
-  const [location, setLocation] = useState<string>('')
-  const [thumbnail, setThumbnail] = useState<File>()
-  const [uploadData, setUploadData] = useState({})
-  const [video, setVideo] = useState<File>()
-  const [videoProgress, setVideoProgress] = useState([]);
+  const [title, setTitle] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [thumbnail, setThumbnail] = useState<File>();
+  const [uploadData, setUploadData] = useState({});
+  const [video, setVideo] = useState<File>();
+  const [videoProgress, setVideoProgress] = useState();
+  const [thumbnailCID, setThumbNailCID] = useState();
+  const [open, setOpen] = useState(false);
 
   const thumbnailRef = useRef<HTMLInputElement>(null);
 
@@ -33,57 +36,10 @@ export default function Upload() {
       : null
   );
 
-  console.log('assets:', assets);
-  console.log('status:', status);
-  console.log('error', error);
-  console.log('progress:', progress);
-
-  useEffect(() => {
-    if (progress && progress.length) setVideoProgress(progress[0]);
-  }, [progress]);
-
-  const goBack = () => {
-    window.history.back();
-  };
-
-  // When a user clicks on the upload button
-  const handleSubmit = async () => {
-    // Calling the upload video function
-    await uploadVideo();
-    // Calling the upload thumbnail function and getting the CID
-    const thumbnailCID = await uploadThumbnail();
-    // Creating a object to store the metadata
-    if (assets) {
-      let data = {
-        video: assets?.id,
-        title,
-        description,
-        location,
-        category,
-        thumbnail: thumbnailCID,
-        UploadedDate: Date.now(),
-      };
-      // Calling the saveVideo function and passing the metadata object
-      console.log('data:', data);
-      setUploadData(data);
-      await saveVideo(data);   
-    }
-  };
-
-  // Function to upload the video to IPFS
-  const uploadThumbnail = async () => {
-    // Passing the file to the saveToIPFS function and getting the CID
-    const cid = await saveToIPFS(thumbnail);
-    // Returning the CID
-    return cid;
-  };
-
-  // Function to upload the video to Livepeer
-  const uploadVideo = async () => {
-    // Calling the createAsset function from the useCreateAsset hook to upload the video
-    createAsset();
-  };
-
+  // console.log('status:', status);
+  // console.log('error', error);
+  // console.log('progress:', progress);
+  // console.log('assets', assets);
   // Function to save the video to the Contract
   const saveVideo = async (data) => {
     // Get the contract from the getContract function
@@ -100,12 +56,77 @@ export default function Upload() {
       data.UploadedDate
     );
   };
+  const saveToContract = async (assets) => {
+    // Creating a object to store the metadata
+    if (assets.length) {
+      console.log('assets obtained', assets);
+      let data = {
+        video: assets[0]?.id,
+        title,
+        description,
+        location,
+        category,
+        thumbnail: thumbnailCID,
+        UploadedDate: Date.now(),
+      };
+      // Calling the saveVideo function and passing the metadata object
+      console.log('data:', data);
+      setUploadData(data);
+      await saveVideo(data);
+    }
+  };
+  useEffect(() => {
+    if (assets && assets.length) {
+      saveToContract(assets);
+    }
+  }, [assets]);
+
+  useEffect(() => {
+    if (progress && progress.length) {
+      setVideoProgress(progress[0]);
+    }
+  }, [progress]);
+
+  const goBack = () => {
+    window.history.back();
+  };
+
+  // Function to upload the video to IPFS
+  const uploadThumbnail = async () => {
+    // Passing the file to the saveToIPFS function and getting the CID
+    const cid = await saveToIPFS(thumbnail);
+    // Returning the CID
+    return cid;
+  };
+
+  // Function to upload the video to Livepeer
+  const uploadVideo = async () => {
+    // Calling the createAsset function from the useCreateAsset hook to upload the video
+    createAsset();
+  };
+
+  // When a user clicks on the upload button
+  const handleSubmit = async () => {
+    // Calling the upload video function
+    await uploadVideo();
+    // Calling the upload thumbnail function and getting the CID
+    const response = await uploadThumbnail();
+    setThumbNailCID(response);
+    setOpen(true);
+  };
 
   return (
     <Background>
-      <p className="text-2xl font-bold text-white">
-        {videoProgress && videoProgress.progress * 100}
-      </p>
+      <UploadStatus
+        open={open}
+        close={() => setOpen(false)}
+        videoProgress={videoProgress}
+        assets={assets}
+        status={status}
+        thumbnail={thumbnail}
+      />
+      {/* <p className="text-2xl font-bold text-white">{videoProgress && videoProgress.progress * 100}</p>
+      <p className="text-2xl font-bold text-white">{videoProgress && videoProgress.phase}</p> */}
       <div className="flex h-screen w-full flex-row">
         <Sidebar updateCategory={(e) => setCategory(e)} />
         <div className="flex flex-1 flex-col">
@@ -126,6 +147,13 @@ export default function Upload() {
               >
                 <BiCloud />
                 <p className="ml-2">Upload</p>
+              </button>
+              <button
+                onClick={() => setOpen(true)}
+                style={{ padding: '13px', borderRadius: '100%' }}
+                className="ml-6 flex flex-row items-center  justify-between  rounded-lg bg-green-500 py-2 px-4 text-white hover:bg-green-700"
+              >
+                <BiUpload />
               </button>
             </div>
           </div>
