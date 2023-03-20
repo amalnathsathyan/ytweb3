@@ -2,17 +2,15 @@ import "../styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
 import { LivepeerConfig } from "@livepeer/react";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-import { ThemeProvider } from "../utils";
-import { Toaster } from "react-hot-toast";
-import { ApolloProvider } from "@apollo/client";
+import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
+import { ThemeProvider } from '../utils';
+import { Toaster } from 'react-hot-toast';
+import { ApolloProvider } from '@apollo/client';
 import { apolloClient, LivePeerClient } from '../clients';
+import { polygonMumbai } from '@wagmi/chains';
 
-const { chains, provider } = configureChains(
-  [chain.polygonMumbai],
-  [publicProvider()]
-);
+const { chains, provider } = configureChains([polygonMumbai], [publicProvider()]);
 
 const { connectors } = getDefaultWallets({
   appName: "Ourtube",
