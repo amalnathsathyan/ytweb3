@@ -5,7 +5,7 @@ module.exports = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['raw.githubusercontent.com'],
+    domains: ['raw.githubusercontent.com', 'https://w3s.link/ipfs/'],
   },
   webpack: (config, { isServer }) => {
     // Add custom webpack configurations here
