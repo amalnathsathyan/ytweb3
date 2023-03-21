@@ -6,6 +6,7 @@ import { UploadInput, Background } from '../../components';
 import { saveToIPFS, getContract } from '../../utils';
 import toast from 'react-hot-toast';
 import UploadStatus from '../../components/uploadStatus/UploadStatus';
+import { CreateAssetFileProgress } from '@livepeer/core/types';
 
 export default function Upload() {
   const [title, setTitle] = useState<string>('');
@@ -15,7 +16,7 @@ export default function Upload() {
   const [thumbnail, setThumbnail] = useState<File>();
   const [uploadData, setUploadData] = useState({});
   const [video, setVideo] = useState<File>();
-  const [videoProgress, setVideoProgress] = useState();
+  const [videoProgress, setVideoProgress] = useState<CreateAssetFileProgress>();
   const [thumbnailCID, setThumbNailCID] = useState();
   const [open, setOpen] = useState(false);
 
