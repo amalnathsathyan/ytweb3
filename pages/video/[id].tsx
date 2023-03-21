@@ -15,37 +15,43 @@ export default function Video() {
   const { id } = router.query
   const [video, setVideo] = useState<IVideo | null>(null)
   const [relatedVideos, setRelatedVideos] = useState<IVideo[]>([])
+  const [category, setCategory] = useState<String>('');
 
   const fetchVideos = () => {
-    apolloClient.query({
-      query: GET_ALL_VIDEOS,
-      variables: {
-        first: 20,
-        skip: 0,
-        orderBy: 'createdAt',
-        orderDirection: 'desc',
-        where: {},
-      },
-      fetchPolicy: 'network-only',
-    })
+    apolloClient
+      .query({
+        query: GET_ALL_VIDEOS,
+        variables: {
+          first: 20,
+          skip: 0,
+          orderBy: 'createdAt',
+          orderDirection: 'desc',
+          where: {
+            ...(category && {
+              category_contains_nocase: category,
+            }),
+          },
+        },
+        fetchPolicy: 'network-only',
+      })
       .then(({ data }) => {
-        setRelatedVideos(data.videos.filter((v) => v.id !== id))
-        const video = data?.videos?.find((video) => video.id === id)
-        setVideo(video)
-        console.log('videos', data.videos)
+        setRelatedVideos(data.videos.filter((v) => v.id !== id));
+        const video = data?.videos?.find((video) => video.id === id);
+        setVideo(video);
+        console.log('videos', data.videos);
       })
       .catch((err) => {
-        console.log('err', err)
-      })
-  }
+        console.log('err', err);
+      });
+  };
 
   useEffect(() => {
-    fetchVideos()
-  }, [id])
+    fetchVideos();
+  }, [id]);
 
   return (
     <Background className="flex  h-screen w-full flex-row">
-      <Sidebar />
+      <Sidebar updateCategory={(category) => setCategory(category)} />
       <div className="flex flex-1 flex-col">
         <Header />
         {video && (
@@ -58,8 +64,7 @@ export default function Video() {
                     {video.title}
                   </h3>
                   <p className="mt-1 text-gray-500 ">
-                    {video.category} •{' '}
-                    {moment(new Date(video.createdAt * 1000)).fromNow()}
+                    {video.category} •{moment(new Date(Number(video.createdAt) * 1000)).fromNow()}
                   </p>
                 </div>
               </div>
@@ -97,5 +102,5 @@ export default function Video() {
         )}
       </div>
     </Background>
-  )
+  );
 }
