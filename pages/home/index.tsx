@@ -52,15 +52,13 @@ export default function Home() {
                 {Array(10)
                   .fill(0)
                   .map((_, index) => (
-                    <div className="w-80">
+                    <div className="w-80" key={index}>
                       <Loader />
                     </div>
                   ))}
               </>
             ) : (
-              videos?.map((video: any) => (
-                <Video video={video} horizontal={false} />
-              ))
+              videos?.map((video: any) => <Video key={video} video={video} horizontal={false} />)
             )}
           </div>
         </div>
