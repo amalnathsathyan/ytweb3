@@ -1,6 +1,6 @@
-import ContractAbi from "../artifacts/contracts/OurTube.sol/OurTube.json";
-import { ethers } from "ethers";
-import { CONTRACT_ADDRESS } from "../constants";
+import ContractAbi from './Ourtube.json';
+import { ethers } from 'ethers';
+import { CONTRACT_ADDRESS } from '../constants';
 
 export default function getContract() {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
