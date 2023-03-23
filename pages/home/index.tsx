@@ -30,7 +30,6 @@ export default function Home() {
       },
       fetchPolicy: "network-only",
     }).then(({ data }) => {
-      console.log("Videos", data.videos);
       setVideos(data.videos);
       setLoading(false);
     });

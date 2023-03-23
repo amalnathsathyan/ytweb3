@@ -37,10 +37,6 @@ export default function Upload() {
       : null
   );
 
-  // console.log('status:', status);
-  // console.log('error', error);
-  // console.log('progress:', progress);
-  // console.log('assets', assets);
   // Function to save the video to the Contract
   const saveVideo = async (data) => {
     // Get the contract from the getContract function
@@ -71,7 +67,6 @@ export default function Upload() {
         UploadedDate: Date.now(),
       };
       // Calling the saveVideo function and passing the metadata object
-      console.log('data:', data);
       setUploadData(data);
       await saveVideo(data);
     }
@@ -87,6 +82,10 @@ export default function Upload() {
       setVideoProgress(progress[0]);
     }
   }, [progress]);
+
+  console.log('progress',progress)
+  console.log('asset', assets)
+  console.log('status', status)
 
   const goBack = () => {
     window.history.back();
@@ -108,12 +107,12 @@ export default function Upload() {
 
   // When a user clicks on the upload button
   const handleSubmit = async () => {
+    setOpen(true);
     // Calling the upload video function
     await uploadVideo();
     // Calling the upload thumbnail function and getting the CID
     const response = await uploadThumbnail();
     setThumbNailCID(response);
-    setOpen(true);
   };
 
   return (
