@@ -4,7 +4,7 @@ Reviral It is a decentralized, community-governed video sharing platform where u
 
 Although still under development, we have hosted a public preview for users to explore and provide feedback. Check it out here: [https://ytweb3.vercel.app](https://ytweb3.vercel.app)
 
-![ReviralIt_Preview](https:ipfs.io/ipfs/QmdzZv5s1v5fZiqAy4PCENU9PdvL8nW6QmwZjAi75mUDNe)
+![ReviralIt_Preview](https://w3s.link/ipfs/QmdzZv5s1v5fZiqAy4PCENU9PdvL8nW6QmwZjAi75mUDNe)
 
 ## Features 🌟
 
