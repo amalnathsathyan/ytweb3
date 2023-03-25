@@ -38,7 +38,6 @@ export default function Video() {
         setRelatedVideos(data.videos.filter((v) => v.id !== id));
         const video = data?.videos?.find((video) => video.id === id);
         setVideo(video);
-        console.log('videos', data.videos);
       })
       .catch((err) => {
         console.log('err', err);

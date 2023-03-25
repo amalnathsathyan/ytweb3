@@ -45,26 +45,18 @@ export default function UploadStatus({ open, close, videoProgress, assets, statu
   // const [open, setOpen] = useState(true)
   const [videos, setVideos] = useState([]);
 
-  useEffect(() => {
-    fetch('https://livepeer.studio/api/asset', {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_LIVEPEER_KEY}`,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setVideos(data.filter((item) => item.status.phase != STATUS.READY));
-      });
-  }, []);
-
-  console.log(videos);
-
-  console.log('assets', assets);
-  console.log('videoProgress', videoProgress);
-  console.log('status', status);
-  console.log('thumbnail', thumbnail);
-  console.log('path', thumbnail && URL.createObjectURL(thumbnail));
+  // useEffect(() => {
+  //   fetch('https://livepeer.studio/api/asset', {
+  //     method: 'GET',
+  //     headers: new Headers({
+  //       Authorization: `Bearer ${process.env.NEXT_PUBLIC_LIVEPEER_KEY}`,
+  //     }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setVideos(data.filter((item) => item.status.phase != STATUS.READY));
+  //     });
+  // }, []);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -161,48 +153,46 @@ export default function UploadStatus({ open, close, videoProgress, assets, statu
                     </div>
 
                     {/* <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
-                      <ul role="list" className="-my-6 divide-y divide-gray-200">
-                        {videos &&
-                          videos.length &&
-                          videos.map((video) => (
-                            <li key={product.id} className="flex py-6">
-                              {video.status.phase !== STATUS.FAILED && (
-                                  <Player
-                                    title="Waterfalls"
-                                    playbackId={video.playbackId}
-                                    showPipButton
-                                    showTitle={false}
-                                    aspectRatio="16to9"
-                                    // poster={<PosterImage />}
-                                    controls={{
-                                      autohide: 3000,
-                                    }}
-                                    theme={{
-                                      borderStyles: { containerBorderStyle: 'solid' },
-                                      radii: { containerBorderRadius: '10px' },
-                                    }}
-                                  />
-                              )}
-
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <h3>
-                                      <a href={product.href}>{video.name}</a>
-                                    </h3>
+                        <ul role="list" className="-my-6 divide-y divide-gray-200">
+                          {videos &&
+                            videos.length &&
+                            videos.map((video) => (
+                              <li key={product.id} className="flex py-6">
+                                {video?.status?.phase === STATUS.PROCESSING && (
+                                  <div>
+                                    <Player
+                                      title="Waterfalls"
+                                      playbackId={video.playbackId}
+                                      showPipButton
+                                      showTitle={false}
+                                      aspectRatio="16to9"
+                                      // poster={<PosterImage />}
+                                      controls={{
+                                        autohide: 3000,
+                                      }}
+                                      theme={{
+                                        borderStyles: { containerBorderStyle: 'solid' },
+                                        radii: { containerBorderRadius: '10px' },
+                                      }}
+                                    />
+                                    <div className="ml-4 flex flex-1 flex-col">
+                                      <div>
+                                        <div className="flex justify-between text-base font-medium text-gray-900">
+                                          <h3>
+                                            <a href={product.href}>{video.name}</a>
+                                          </h3>
+                                        </div>
+                                        <div className="flex justify-between text-base font-medium text-gray-900">
+                                          <p className="mt-1 text-sm text-gray-500">{video.status.phase}</p>
+                                          {video.status.progress && <p className="ml-4">{video.status.progress}</p>}
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="flex justify-between text-base font-medium text-gray-900">
-                                    <p className="mt-1 text-sm text-gray-500">{video.status.phase}</p>
-                                    {video.status.progress && <p className="ml-4">{video.status.progress}</p>}
-                                    {video.status.phase === STATUS.FAILED && (
-                                      <p className="mt-1 text-sm text-red-500">{video.status.errorMessage}</p>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                      </ul>
+                                )}
+                              </li>
+                            ))}
+                        </ul>
                     </div> */}
                   </div>
                 </Dialog.Panel>

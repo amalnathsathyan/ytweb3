@@ -13,6 +13,7 @@ const SUB_GRAPH_URL = `${SUB_GRAPH_BASE_URL}/subgraphs/name/${SUB_GRAPH_NAME}`
 const STATUS = {
   READY: 'ready',
   FAILED: 'failed',
+  PROCESSING:'processing',
 };
 
 export {
